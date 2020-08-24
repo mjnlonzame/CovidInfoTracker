@@ -5,12 +5,12 @@ import java.util.Scanner;
 public class MainClass {
     private static Scanner sc = new Scanner(System.in);
     private static int optionNumber;
-
+    private static CovidInformationService covidInformationService;
 
     public static void main(String[] args) {
 
-        CovidInformationService covidInformationService = new CovidInformationService();
-
+        covidInformationService = new CovidInformationService();
+        optionNumber = 0;
 
         while (optionNumber != -1) {
             displayCovidInformation();
@@ -38,7 +38,7 @@ public class MainClass {
                     System.out.println(countryName + " was not found in the records!");
                 }
             } else if (optionNumber == 4) {// search info
-
+                searchAccount();
             }
         }
         System.out.println("Goodbye! ");
@@ -55,6 +55,16 @@ public class MainClass {
         System.out.println("[3] Delete Covid Info");
         System.out.println("[4] Search for Covid Info");
         System.out.println("[-1] Exit\n");
+    }
+
+    private static void searchAccount(){
+        System.out.print("\nEnter country name: ");
+        String country = sc.next();
+
+        covidInformationService.searchCovidInfo(country);
+
+        optionNumber = 0;
+        return;
     }
 
 
