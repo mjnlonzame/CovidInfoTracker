@@ -16,8 +16,8 @@ public class CovidInformationService {
     }
 
 
-    public void delete() {
-
+    public boolean delete(String countryName) {
+        return countryNameToCovidInfo.keySet().removeIf(key -> key.equals(countryName));
     }
 
     public String getAllInfo() {
@@ -26,10 +26,7 @@ public class CovidInformationService {
                 "Country \t Cases \t Deaths \t Recoveries\n" + "====================================\n";
 
         output.append(columnNames).append("\n");
-//        countryNameToCovidInfo.keySet().stream().map(key -> {
-//            System.out.print(key);
-//           return null;
-//        }).collect(Collectors.);
+
         countryNameToCovidInfo.forEach((k, v) -> {
             output.append(v.getCountry());
             output.append("\t");
