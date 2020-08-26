@@ -52,7 +52,29 @@ public class CovidInformationService {
         return output.toString();
     }
 
-    public CovidInformation searchCovidInfo(String country){
+    public void displayCovidInfoList(List<? extends CovidInformation> covidInfoList){
+        StringJoiner join = new StringJoiner("			");
+
+        if(getCovidInfoList().isEmpty()){
+            System.out.println("\nNo covid information found!\n");
+        }else{
+
+            List<CovidInformation> listCovidInfoList = new ArrayList<CovidInformation>(covidInfoList);
+
+            System.out.println("==============================================================================================================");
+            join.add("Country").add("Cases").add("Deaths").add("Recoveries");
+            System.out.println(join.toString());
+            System.out.println("==============================================================================================================");
+            listCovidInfoList.forEach((e)->{
+                StringJoiner join2 = new StringJoiner("			");
+                join2.add(e.getCountry()).add(String.valueOf(e.getCases())).add(String.valueOf(e.getDeaths())).add(String.valueOf(e.getRecoveries()));
+                System.out.println(join2.toString());
+            });
+            System.out.println("\n");
+        }
+    }
+
+    public void searchCovidInfo(String country){
         Collection<CovidInformation> covidInfoList = getCovidInfoList().values();
         ArrayList<CovidInformation> tempCovidList = new ArrayList<CovidInformation>(covidInfoList);
         CovidInformation covidInfo = null;
@@ -61,14 +83,14 @@ public class CovidInformationService {
 
         if(optCovidInfo.isPresent()){
             covidInfo = optCovidInfo.get();
-
-            System.out.print(getAllInfo());
+            covidInfo.displayInfo();
+//            System.out.print(getAllInfo());
             System.out.println("\n");
 
         } else {
             System.out.println("\nCountry Not Found!\n");
         }
 
-        return covidInfo;
+//        return covidInfo;
     }
 }

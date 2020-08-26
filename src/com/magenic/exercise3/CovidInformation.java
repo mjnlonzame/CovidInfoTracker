@@ -50,4 +50,12 @@ public class CovidInformation implements CovidInformationInterface {
         output.append("Total Recoveries: ").append(recoveries).append("\n");
         return output.toString();
     }
+
+    public void displayInfo() {
+        System.out.println("\n==================================");
+        System.out.println("Country Name: " + this.country);
+        System.out.println("Cases: " + this.cases);
+        System.out.println("Deaths: " + this.deaths);
+        System.out.println("Recoveries: " + this.recoveries);
+    }
 }
