@@ -75,18 +75,6 @@ public class MainClass {
         System.out.println("\n" + covidInformation.format(covidInformation.getCountry(), covidInformation.getCases(), covidInformation.getDeaths(), covidInformation.getRecoveries()));
     }
 
-    private static void deleteCovidInformation(){
-        System.out.print("\nEnter Country Name: ");
-        String countryName = sc.next();
-        boolean removed = covidInformationService.delete(countryName);
-        if(removed){
-            System.out.println(countryName + " CovidInformation has been deleted.\n");
-            System.out.println(covidInformationService.getAllInfo());
-        } else {
-            System.out.println(countryName + " was not found in the records!");
-        }
-    }
-
     private static void displayCovidInfoList(){
         covidInformationService.displayCovidInfoList(covidInformationService.getCovidInfoList().entrySet().stream().map(e->e.getValue()).collect(Collectors.toList()));
         optionNumber = 0;
