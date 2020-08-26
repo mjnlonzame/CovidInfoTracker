@@ -9,10 +9,9 @@ import java.util.stream.Collectors;
 public class MainClass {
     private static Scanner sc = new Scanner(System.in);
     private static int optionNumber;
-    private static CovidInformationService covidInformationService;
+    private static CovidInformationService covidInformationService ;
 
     public static void main(String[] args) {
-
         covidInformationService = new CovidInformationService();
         optionNumber = 0;
 
@@ -102,6 +101,18 @@ public class MainClass {
 
         optionNumber = 0;
         return;
+    }
+
+    private static void deleteCovidInformation(){
+        System.out.print("\nEnter Country Name: ");
+        String countryName = sc.next();
+        boolean removed = covidInformationService.delete(countryName);
+        if(removed){
+            System.out.println(countryName + " CovidInformation has been deleted.\n");
+            System.out.println(covidInformationService.getAllInfo());
+        } else {
+            System.out.println(countryName + " was not found in the records!");
+        }
     }
 
 
