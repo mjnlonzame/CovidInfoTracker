@@ -16,10 +16,6 @@ public class CovidInformationService {
         return covidInformation;
     }
 
-    public CovidInformation update() {
-        return null;
-    }
-
     public Map<String, CovidInformation> getCovidInfoList() {
         return countryNameToCovidInfo;
     }
@@ -55,24 +51,36 @@ public class CovidInformationService {
         }
     }
 
-    public List<CovidInformation> searchCovidInfo(String searchName, String searchValue) {
+    public List<CovidInformation> searchCovidInfo(String searchName, String searchValue, String sort) {
+        if (sort == null)
+            sort = "country"; //default sorting
         return countryNameToCovidInfo
                 .values()
                 .stream()
                 .filter(getPredicate(searchName, searchValue))
+                .sorted(getKeyExtractor(sort))
                 .collect(Collectors.toList());
     }
 
     private Predicate<CovidInformation> getPredicate(String searchName, String searchValue) {
-        if (searchName.equals("country"))
-            return covidInfo -> covidInfo.getCountry().equals("PH");
-        else if (searchName.equals("cases"))
+        if (Objects.nonNull(searchName) && searchName.equals("country"))
+            return covidInfo -> covidInfo.getCountry().equals(searchValue);
+        else if (Objects.nonNull(searchName) && searchName != null && searchName.equals("cases"))
             return covidInfo -> covidInfo.getCases() >= Integer.valueOf(searchValue);
-        else if (searchName.equals("deaths"))
+        else if (Objects.nonNull(searchName) && searchName.equals("deaths"))
             return covidInfo -> covidInfo.getDeaths() >= Integer.valueOf(searchValue);
-        else if (searchName.equals("recoveries"))
+        else if (Objects.nonNull(searchName) && searchName.equals("recoveries"))
             return covidInfo -> covidInfo.getRecoveries() >= Integer.valueOf(searchValue);
         else
-            return null;
+            return Objects::nonNull;
+    }
+
+    private Comparator<CovidInformation> getKeyExtractor(String keyName) {
+        Map<String, Comparator<CovidInformation>> map = new HashMap<>();
+        map.put("country", Comparator.comparing(CovidInformation::getCountry));
+        map.put("cases", Comparator.comparing(CovidInformation::getCases));
+        map.put("deaths", Comparator.comparing(CovidInformation::getDeaths));
+        map.put("recoveries", Comparator.comparing(CovidInformation::getRecoveries));
+        return map.get(keyName);
     }
 }

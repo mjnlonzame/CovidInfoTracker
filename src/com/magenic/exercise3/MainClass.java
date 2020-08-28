@@ -17,7 +17,7 @@ public class MainClass {
             optionNumber = sc.nextInt();
 
             if (optionNumber == 1) { //display all info
-                covidInformationService.displayCovidInfoList(covidInformationService.getAllInfo());
+                displayAllCovidInformation();
             } else if (optionNumber == 2) { // add new covid info
                 addNewCovidInformation();
             } else if (optionNumber == 3) { // delete covid info
@@ -30,6 +30,26 @@ public class MainClass {
         sc.close();
     }
 
+    private static void displayAllCovidInformation(){
+        displayOptions();
+        List<String> sortNames = List.of("country", "cases", "deaths", "recoveries");
+        int searchOption = sc.nextInt();
+        if (searchOption != -1) {
+            String sortName = sortNames.get(searchOption - 1);
+            List<CovidInformation> covidInformationList = covidInformationService.searchCovidInfo(null, null, sortName);
+            covidInformationService.displayCovidInfoList(covidInformationList);
+        }
+    }
+
+    private static void displayOptions() {
+        System.out.println("\nChoose an option");
+        System.out.println("[1] By Country");
+        System.out.println("[2] By Cases");
+        System.out.println("[3] By Deaths");
+        System.out.println("[4] By Recoveries");
+        System.out.println("[-1] Exit");
+        System.out.print("\nEnter option type: ");
+    }
     private static void displayCovidInformation() {
         System.out.println("\nChoose an Action to Perform");
         System.out.println("[1] List All Info");
@@ -72,19 +92,13 @@ public class MainClass {
     private static void searchCovidInfo() {
         List<String> searchNames = List.of("country", "cases", "deaths", "recoveries");
 
-        System.out.println("\nChoose an option");
-        System.out.println("[1] By Country");
-        System.out.println("[2] By Cases");
-        System.out.println("[3] By Deaths");
-        System.out.println("[4] By Recoveries");
-        System.out.println("[-1] Exit");
-        System.out.print("\nEnter option type: ");
+        displayOptions();
         int searchOption = sc.nextInt();
         if (searchOption != -1) {
             String searchName = searchNames.get(searchOption - 1);
             System.out.print("\nEnter " + getSeachInfoPlaceholder(searchName) + ": ");
             String searchValue = sc.next();
-            List<CovidInformation> covidInformationList = covidInformationService.searchCovidInfo(searchName, searchValue);
+            List<CovidInformation> covidInformationList = covidInformationService.searchCovidInfo(searchName, searchValue, null);
             covidInformationService.displayCovidInfoList(covidInformationList);
         }
         optionNumber = 0;
