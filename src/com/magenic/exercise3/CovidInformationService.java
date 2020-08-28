@@ -1,13 +1,14 @@
 package com.magenic.exercise3;
 
 import java.util.*;
-import java.util.logging.Logger;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CovidInformationService {
-    private HashMap<String, CovidInformation> countryNameToCovidInfo;
+    private Map<String, CovidInformation> countryNameToCovidInfo;
 
-    public CovidInformationService(){
-        countryNameToCovidInfo = new HashMap<String,CovidInformation>();
+    public CovidInformationService() {
+        countryNameToCovidInfo = new HashMap<String, CovidInformation>();
     }
 
     public CovidInformation add(CovidInformation covidInformation) {
@@ -19,53 +20,33 @@ public class CovidInformationService {
         return null;
     }
 
-    public HashMap<String,CovidInformation> getCovidInfoList(){
+    public Map<String, CovidInformation> getCovidInfoList() {
         return countryNameToCovidInfo;
     }
 
-    public void setCovidInfoList(HashMap<String,CovidInformation> countryNameToCovidInfo ){
+    public void setCovidInfoList(HashMap<String, CovidInformation> countryNameToCovidInfo) {
         this.countryNameToCovidInfo = countryNameToCovidInfo;
     }
-
 
     public boolean delete(String countryName) {
         return countryNameToCovidInfo.keySet().removeIf(key -> key.equals(countryName));
     }
 
-    public String getAllInfo() {
-        StringBuilder output = new StringBuilder();
-        String columnNames = "====================================\n" +
-                "Country \t Cases \t Deaths \t Recoveries\n" + "====================================\n";
-
-        output.append(columnNames).append("\n");
-
-        countryNameToCovidInfo.forEach((k, v) -> {
-            output.append(v.getCountry());
-            output.append("\t");
-            output.append(v.getCases());
-            output.append("\t");
-            output.append(v.getDeaths());
-            output.append("\t");
-            output.append(v.getRecoveries());
-            output.append("\t");
-        });
-        return output.toString();
+    public List<CovidInformation> getAllInfo() {
+        return (List<CovidInformation>) countryNameToCovidInfo.values().stream().collect(Collectors.toList());
     }
 
-    public void displayCovidInfoList(List<? extends CovidInformation> covidInfoList){
-        StringJoiner join = new StringJoiner("			");
-
-        if(getCovidInfoList().isEmpty()){
+    public void displayCovidInfoList(List<CovidInformation> covidInfoList) {
+        if (getCovidInfoList().isEmpty()) {
             System.out.println("\nNo covid information found!\n");
-        }else{
-
-            List<CovidInformation> listCovidInfoList = new ArrayList<CovidInformation>(covidInfoList);
+        } else {
+            StringJoiner join = new StringJoiner("			");
 
             System.out.println("==============================================================================================================");
             join.add("Country").add("Cases").add("Deaths").add("Recoveries");
             System.out.println(join.toString());
             System.out.println("==============================================================================================================");
-            listCovidInfoList.forEach((e)->{
+            covidInfoList.forEach((e) -> {
                 StringJoiner join2 = new StringJoiner("			");
                 join2.add(e.getCountry()).add(String.valueOf(e.getCases())).add(String.valueOf(e.getDeaths())).add(String.valueOf(e.getRecoveries()));
                 System.out.println(join2.toString());
@@ -74,23 +55,24 @@ public class CovidInformationService {
         }
     }
 
-    public void searchCovidInfo(String country){
-        Collection<CovidInformation> covidInfoList = getCovidInfoList().values();
-        ArrayList<CovidInformation> tempCovidList = new ArrayList<CovidInformation>(covidInfoList);
-        CovidInformation covidInfo = null;
+    public List<CovidInformation> searchCovidInfo(String searchName, String searchValue) {
+        return countryNameToCovidInfo
+                .values()
+                .stream()
+                .filter(getPredicate(searchName, searchValue))
+                .collect(Collectors.toList());
+    }
 
-        Optional<CovidInformation> optCovidInfo = tempCovidList.stream().filter(cvdInfo -> cvdInfo.getCountry().equals(country)).findFirst();
-
-        if(optCovidInfo.isPresent()){
-            covidInfo = optCovidInfo.get();
-            covidInfo.displayInfo();
-//            System.out.print(getAllInfo());
-            System.out.println("\n");
-
-        } else {
-            System.out.println("\nCountry Not Found!\n");
-        }
-
-//        return covidInfo;
+    private Predicate<CovidInformation> getPredicate(String searchName, String searchValue) {
+        if (searchName.equals("country"))
+            return covidInfo -> covidInfo.getCountry().equals("PH");
+        else if (searchName.equals("cases"))
+            return covidInfo -> covidInfo.getCases() >= Integer.valueOf(searchValue);
+        else if (searchName.equals("deaths"))
+            return covidInfo -> covidInfo.getDeaths() >= Integer.valueOf(searchValue);
+        else if (searchName.equals("recoveries"))
+            return covidInfo -> covidInfo.getRecoveries() >= Integer.valueOf(searchValue);
+        else
+            return null;
     }
 }
