@@ -1,8 +1,13 @@
 package com.magenic.exercise3;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class MainClass {
     private static Scanner sc = new Scanner(System.in);
@@ -26,6 +31,8 @@ public class MainClass {
                 deleteCovidInformation();
             } else if (optionNumber == 4) {// search info
                 searchCovidInfo();
+            } else if (optionNumber == 5) {// list all info from file
+                listAllCovidInfoFromFile();
             }
         }
         System.out.println("Goodbye! ");
@@ -58,6 +65,7 @@ public class MainClass {
         System.out.println("[2] Add new Covid Info");
         System.out.println("[3] Delete Covid Info");
         System.out.println("[4] Search for Covid Info");
+        System.out.println("[5] List all info from file");
         System.out.println("[-1] Exit\n");
     }
 
@@ -112,6 +120,38 @@ public class MainClass {
             covidInformationService.displayCovidInfoList(covidInformationList);
         }
         optionNumber = 0;
+    }
+
+    private static void listAllCovidInfoFromFile() {
+        Path pth = Paths.get("C://");
+        final int maxDepth = 10;
+        Stream<Path> stream = null;
+        try {
+            stream = Files.find(pth,1,(path, basicFileAttributes) -> {
+                File file = path.toFile();
+                return !file.isDirectory() && file.getName().contains("_covid");
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("\nCOVID files in the directory");
+        stream.forEach(System.out::println);
+
+        System.out.println("\nChoose file to view: ");
+        String file = sc.next();
+
+        System.out.println("\nDisplaying info from " + file);
+
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new FileReader(file));
+                reader.lines().forEach(System.out::println);
+            } catch (FileNotFoundException fileNotFoundException) {
+                fileNotFoundException.printStackTrace();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
     }
 
     private static void deleteCovidInformation() {
