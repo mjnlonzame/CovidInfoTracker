@@ -47,6 +47,14 @@ public class MainClass {
             String sortName = sortNames.get(searchOption - 1);
             List<CovidInformation> covidInformationList = covidInformationService.searchCovidInfo(null, null, sortName);
             covidInformationService.displayCovidInfoList(covidInformationList);
+			
+			if(covidInformationList.size() > 0) {
+        		System.out.print("\nWould you like to save the result to a file (Y/N)? ");
+            	if(sc.next().equals("Y")) {
+            		covidInformationService.saveCovidInfoList(covidInformationList);
+            		System.out.println("Information is saved in ");
+            	}
+            }
         }
     }
 

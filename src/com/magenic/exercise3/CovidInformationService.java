@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.nio.charset.StandardCharsets;
 
 public class CovidInformationService {
     private Map<String, CovidInformation> countryNameToCovidInfo;
@@ -101,4 +102,15 @@ public class CovidInformationService {
         map.put("recoveries", Comparator.comparing(CovidInformation::getRecoveries));
         return map.get(keyName);
     }
+	
+	public void saveCovidInfoList(List<CovidInformation> covidInformationList) {
+		Base64.Encoder encoder = Base64.getEncoder();
+		
+		StringJoiner strJoin = new StringJoiner("			");
+		covidInformationList.forEach((e) -> {
+			strJoin.add(e.getCountry()).add(String.valueOf(e.getCases())).add(String.valueOf(e.getDeaths())).add(String.valueOf(e.getRecoveries()));			
+		});
+		
+		String encodedCovidInfo = encoder.encodeToString(strJoin.toString().getBytes(StandardCharsets.UTF_8));
+	}
 }
