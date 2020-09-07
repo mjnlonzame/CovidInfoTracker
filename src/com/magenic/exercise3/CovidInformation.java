@@ -1,5 +1,6 @@
 package com.magenic.exercise3;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class CovidInformation implements CovidInformationInterface {
@@ -7,6 +8,7 @@ public class CovidInformation implements CovidInformationInterface {
     private int cases;
     private int deaths;
     private int recoveries;
+    private LocalDate date;
 
     public String getCountry() {
         return country;
@@ -40,10 +42,18 @@ public class CovidInformation implements CovidInformationInterface {
         this.recoveries = recoveries;
     }
 
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
     @Override
-    public String format(String country, int cases, int deaths, int recoveries) {
+    public String format(String country, int cases, int deaths, int recoveries, LocalDate date) {
         StringBuilder output = new StringBuilder();
-        output.append("Date: ").append(new Date().toString()).append("\n");
+        output.append("Date: ").append(date.toString()).append("\n");
         output.append("Country: ").append(country).append("\n");
         output.append("Total Cases: ").append(cases).append("\n");
         output.append("Total Deaths: ").append(deaths).append("\n");

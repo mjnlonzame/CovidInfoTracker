@@ -1,5 +1,7 @@
 package com.magenic.exercise3;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class MainClass {
@@ -85,8 +87,16 @@ public class MainClass {
         int recoveries = sc.nextInt();
         covidInformation.setRecoveries(recoveries);
 
+        System.out.print("Enter Date (MM/dd/yyyy): ");
+        String date = sc.next();
+        //LocalDate localDate = LocalDate.parse(date);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        LocalDate localDate = LocalDate.parse(date,formatter);
+        covidInformation.setDate(localDate);
+
+
         covidInformationService.add(covidInformation);
-        System.out.println("\n" + covidInformation.format(covidInformation.getCountry(), covidInformation.getCases(), covidInformation.getDeaths(), covidInformation.getRecoveries()));
+        System.out.println("\n" + covidInformation.format(covidInformation.getCountry(), covidInformation.getCases(), covidInformation.getDeaths(), covidInformation.getRecoveries(), covidInformation.getDate()));
     }
 
     private static void searchCovidInfo() {
