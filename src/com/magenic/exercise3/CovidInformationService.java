@@ -1,5 +1,6 @@
 package com.magenic.exercise3;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -11,10 +12,27 @@ public class CovidInformationService {
         countryNameToCovidInfo = new HashMap<String, CovidInformation>();
     }
 
-    public CovidInformation add(CovidInformation covidInformation) {
-        countryNameToCovidInfo.put(covidInformation.getCountry(), covidInformation);
-        return covidInformation;
+    public CovidInformation add(CovidInformation newCovidInformation) {
+        Optional<CovidInformation> optionalCovidInformation = Optional.ofNullable(countryNameToCovidInfo.get(newCovidInformation.getCountry()));
+        if (optionalCovidInformation.isPresent()) {
+            CovidInformation currentCovidInfo = optionalCovidInformation.get();
+            if (currentCovidInfo.getDate().compareTo(newCovidInformation.getDate()) == 0) {
+                countryNameToCovidInfo.put(newCovidInformation.getCountry(), newCovidInformation);
+            } else {
+                LocalDate localDateTobeSaved = currentCovidInfo.getDate().compareTo(newCovidInformation.getDate()) > 0 ? currentCovidInfo.getDate() : newCovidInformation.getDate();
+                currentCovidInfo.setCases(Math.addExact(currentCovidInfo.getCases(), newCovidInformation.getCases()));
+                currentCovidInfo.setDeaths(Math.addExact(currentCovidInfo.getDeaths(), newCovidInformation.getDeaths()));
+                currentCovidInfo.setRecoveries(Math.addExact(currentCovidInfo.getRecoveries(), newCovidInformation.getRecoveries()));
+                currentCovidInfo.setDate(localDateTobeSaved);
+                countryNameToCovidInfo.put(currentCovidInfo.getCountry(), currentCovidInfo);
+            }
+        } else {
+            countryNameToCovidInfo.put(newCovidInformation.getCountry(), newCovidInformation);
+        }
+
+        return newCovidInformation;
     }
+
 
     public Map<String, CovidInformation> getCovidInfoList() {
         return countryNameToCovidInfo;
@@ -39,12 +57,12 @@ public class CovidInformationService {
             StringJoiner join = new StringJoiner("			");
 
             System.out.println("==============================================================================================================");
-            join.add("Country").add("Cases").add("Deaths").add("Recoveries");
+            join.add("Country").add("Cases").add("Deaths").add("Recoveries").add("Date");
             System.out.println(join.toString());
             System.out.println("==============================================================================================================");
             covidInfoList.forEach((e) -> {
                 StringJoiner join2 = new StringJoiner("			");
-                join2.add(e.getCountry()).add(String.valueOf(e.getCases())).add(String.valueOf(e.getDeaths())).add(String.valueOf(e.getRecoveries()));
+                join2.add(e.getCountry()).add(String.valueOf(e.getCases())).add(String.valueOf(e.getDeaths())).add(String.valueOf(e.getRecoveries())).add(String.valueOf(e.getDate()));
                 System.out.println(join2.toString());
             });
             System.out.println("\n");
