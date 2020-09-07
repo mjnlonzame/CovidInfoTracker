@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -105,14 +106,26 @@ public class MainClass {
 
         System.out.print("Enter Date (MM/dd/yyyy): ");
         String date = sc.next();
-        //LocalDate localDate = LocalDate.parse(date);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        LocalDate localDate = LocalDate.parse(date,formatter);
+        LocalDate localDate = validateDate(date, formatter);
         covidInformation.setDate(localDate);
 
 
         covidInformationService.add(covidInformation);
         System.out.println("\n" + covidInformation.format(covidInformation.getCountry(), covidInformation.getCases(), covidInformation.getDeaths(), covidInformation.getRecoveries(), covidInformation.getDate()));
+    }
+
+    private static LocalDate validateDate(String date, DateTimeFormatter formatter) {
+        LocalDate localDate = null;
+        try {
+            localDate = LocalDate.parse(date,formatter);
+            return localDate;
+        } catch (DateTimeParseException e) {
+            System.out.println("Please enter date in (MM/dd/yyyy)!");
+            System.out.print("Enter Date (MM/dd/yyyy): ");
+            String correctDate = sc.next();
+            return validateDate(correctDate, formatter);
+        }
     }
 
     private static void searchCovidInfo() {
