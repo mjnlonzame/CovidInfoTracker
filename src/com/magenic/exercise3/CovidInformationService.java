@@ -1,14 +1,8 @@
 package com.magenic.exercise3;
 
-import javax.swing.text.DateFormatter;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -58,7 +52,7 @@ public class CovidInformationService {
     }
 
     public List<CovidInformation> getAllInfo() {
-        return (List<CovidInformation>) countryNameToCovidInfo.values().stream().collect(Collectors.toList());
+        return countryNameToCovidInfo.values().stream().collect(Collectors.toList());
     }
 
     public void displayCovidInfoList(List<CovidInformation> covidInfoList) {
@@ -114,6 +108,7 @@ public class CovidInformationService {
     }
 	
 	public void saveCovidInfoList(List<CovidInformation> covidInformationList) {
+
 		Base64.Encoder encoder = Base64.getEncoder();
         DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 		String filenameDate = LocalDate.now().format(format);
@@ -121,21 +116,18 @@ public class CovidInformationService {
         String filenameCovid = "_covid";
         String encodedFilenameCovid = encoder.encodeToString(filenameCovid.getBytes(StandardCharsets.UTF_8));
         String encodedFileName = encodedFilenameDate + encodedFilenameCovid  + ".txt";
-        Path path = Paths.get("C:/pao/" + encodedFileName);
-        try {
-            Files.createFile(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        System.out.println(System.getProperty("user.dir"));
+        String covidFilesDir = System.getProperty("user.dir") + "\\covidFiles\\";
 		try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("c:/pao/" + encodedFileName));
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter (covidFilesDir  + encodedFileName, true) );
             writer.write("================================================================================================\n");
             writer.write("Country" + "		" + "Cases" + "		" + "Deaths" + "		" + "Recoveries" + "	" + "Date" + "\n");
             writer.write("================================================================================================\n");
             covidInformationList.forEach((e) -> {
                 StringJoiner strJoin = new StringJoiner("		");
                 try {
-                    writer.write(strJoin.add(e.getCountry()).add(String.valueOf(e.getCases())).add(String.valueOf(e.getDeaths())).add(String.valueOf(e.getRecoveries())).add(String.valueOf(e.getDate())).toString() + "\n");
+                    writer.write (strJoin.add(e.getCountry()).add(String.valueOf(e.getCases())).add(String.valueOf(e.getDeaths())).add(String.valueOf(e.getRecoveries())).add(String.valueOf(e.getDate())).toString() + "\n");
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }

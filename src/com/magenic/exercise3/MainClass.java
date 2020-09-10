@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class MainClass {
     private static Scanner sc = new Scanner(System.in);
@@ -40,7 +39,7 @@ public class MainClass {
         sc.close();
     }
 
-    private static void displayAllCovidInformation(){
+    private static void displayAllCovidInformation() {
         displayOptions();
         List<String> sortNames = List.of("country", "cases", "deaths", "recoveries");
         int searchOption = sc.nextInt();
@@ -48,12 +47,12 @@ public class MainClass {
             String sortName = sortNames.get(searchOption - 1);
             List<CovidInformation> covidInformationList = covidInformationService.searchCovidInfo(null, null, sortName);
             covidInformationService.displayCovidInfoList(covidInformationList);
-			
-			if(covidInformationList.size() > 0) {
-        		System.out.print("\nWould you like to save the result to a file (Y/N)? ");
-            	if(sc.next().equalsIgnoreCase("Y")) {
-            		covidInformationService.saveCovidInfoList(covidInformationList);
-            	}
+
+            if (covidInformationList.size() > 0) {
+                System.out.print("\nWould you like to save the result to a file (Y/N)? ");
+                if (sc.next().equalsIgnoreCase("Y")) {
+                    covidInformationService.saveCovidInfoList(covidInformationList);
+                }
             }
         }
     }
@@ -67,6 +66,7 @@ public class MainClass {
         System.out.println("[-1] Exit");
         System.out.print("\nEnter option type: ");
     }
+
     private static void displayCovidInformation() {
         System.out.println("\nChoose an Action to Perform");
         System.out.println("[1] List All Info");
@@ -117,7 +117,7 @@ public class MainClass {
     private static LocalDate validateDate(String date, DateTimeFormatter formatter) {
         LocalDate localDate = null;
         try {
-            localDate = LocalDate.parse(date,formatter);
+            localDate = LocalDate.parse(date, formatter);
             return localDate;
         } catch (DateTimeParseException e) {
             System.out.println("Please enter date in (MM/dd/yyyy)!");
@@ -143,35 +143,34 @@ public class MainClass {
     }
 
     private static void listAllCovidInfoFromFile() {
-        Path pth = Paths.get("C://");
-        final int maxDepth = 10;
-        Stream<Path> stream = null;
+        String covidFilesDir = System.getProperty("user.dir") + "\\covidFiles\\";
+        Path dir = Paths.get(covidFilesDir);
         try {
-            stream = Files.find(pth,1,(path, basicFileAttributes) -> {
-                File file = path.toFile();
-                return !file.isDirectory() && file.getName().contains("_covid");
-            });
+            System.out.println("\nCOVID files in the directory");
+            Files.walk(dir, 1)
+                    .filter(p -> {
+                        File file = p.toFile();
+                        return !file.isDirectory() && file.getName().contains(".txt");
+                    })
+                    .forEach(p -> System.out.println(p.getFileName()));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println("\nCOVID files in the directory");
-        stream.forEach(System.out::println);
 
         System.out.println("\nChoose file to view: ");
         String file = sc.next();
 
         System.out.println("\nDisplaying info from " + file);
 
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(file));
-                reader.lines().forEach(System.out::println);
-            } catch (FileNotFoundException fileNotFoundException) {
-                fileNotFoundException.printStackTrace();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(covidFilesDir + file));
+            reader.lines().forEach(System.out::println);
+        } catch (FileNotFoundException fileNotFoundException) {
+            fileNotFoundException.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
     }
 
     private static void deleteCovidInformation() {
