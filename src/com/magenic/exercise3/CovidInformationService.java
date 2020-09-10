@@ -1,6 +1,16 @@
 package com.magenic.exercise3;
 
+import javax.swing.text.DateFormatter;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -55,7 +65,7 @@ public class CovidInformationService {
         if (getCovidInfoList().isEmpty()) {
             System.out.println("\nNo covid information found!\n");
         } else {
-            StringJoiner join = new StringJoiner("			");
+            StringJoiner join = new StringJoiner("		");
 
             System.out.println("==============================================================================================================");
             join.add("Country").add("Cases").add("Deaths").add("Recoveries").add("Date");
@@ -105,12 +115,39 @@ public class CovidInformationService {
 	
 	public void saveCovidInfoList(List<CovidInformation> covidInformationList) {
 		Base64.Encoder encoder = Base64.getEncoder();
-		
-		StringJoiner strJoin = new StringJoiner("			");
-		covidInformationList.forEach((e) -> {
-			strJoin.add(e.getCountry()).add(String.valueOf(e.getCases())).add(String.valueOf(e.getDeaths())).add(String.valueOf(e.getRecoveries()));			
-		});
-		
-		String encodedCovidInfo = encoder.encodeToString(strJoin.toString().getBytes(StandardCharsets.UTF_8));
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+		String filenameDate = LocalDate.now().format(format);
+		String encodedFilenameDate = encoder.encodeToString(filenameDate.getBytes(StandardCharsets.UTF_8));
+        String filenameCovid = "_covid";
+        String encodedFilenameCovid = encoder.encodeToString(filenameCovid.getBytes(StandardCharsets.UTF_8));
+        String encodedFileName = encodedFilenameDate + encodedFilenameCovid  + ".txt";
+        System.out.println(encodedFilenameDate + encodedFilenameCovid + ".txt");
+        Path path = Paths.get("C:/pao/" + encodedFileName);
+        StringJoiner join = new StringJoiner("			");
+        join.add("Country").add("Cases").add("Deaths").add("Recoveries").add("Date");
+		//System.out.println(strJoin);
+        try {
+            Files.createFile(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("c:/pao/" + encodedFileName));
+            writer.write("================================================================================================\n");
+            writer.write("Country" + "		" + "Cases" + "		" + "Deaths" + "		" + "Recoveries" + "	" + "Date" + "\n");
+            writer.write("================================================================================================\n");
+            covidInformationList.forEach((e) -> {
+                StringJoiner strJoin = new StringJoiner("		");
+                try {
+                    writer.write(strJoin.add(e.getCountry()).add(String.valueOf(e.getCases())).add(String.valueOf(e.getDeaths())).add(String.valueOf(e.getRecoveries())).add(String.valueOf(e.getDate())).toString() + "\n");
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            });
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		//String encodedCovidInfo = encoder.encodeToString(strJoin.toString().getBytes(StandardCharsets.UTF_8));
 	}
 }
