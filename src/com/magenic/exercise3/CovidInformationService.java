@@ -121,11 +121,7 @@ public class CovidInformationService {
         String filenameCovid = "_covid";
         String encodedFilenameCovid = encoder.encodeToString(filenameCovid.getBytes(StandardCharsets.UTF_8));
         String encodedFileName = encodedFilenameDate + encodedFilenameCovid  + ".txt";
-        System.out.println(encodedFilenameDate + encodedFilenameCovid + ".txt");
         Path path = Paths.get("C:/pao/" + encodedFileName);
-        StringJoiner join = new StringJoiner("			");
-        join.add("Country").add("Cases").add("Deaths").add("Recoveries").add("Date");
-		//System.out.println(strJoin);
         try {
             Files.createFile(path);
         } catch (IOException e) {
@@ -145,6 +141,7 @@ public class CovidInformationService {
                 }
             });
             writer.close();
+            System.out.println("Information is saved in " + encodedFileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
