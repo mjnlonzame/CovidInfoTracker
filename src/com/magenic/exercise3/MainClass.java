@@ -51,7 +51,8 @@ public class MainClass {
 			
 			if(covidInformationList.size() > 0) {
         		System.out.print("\nWould you like to save the result to a file (Y/N)? ");
-            	if(sc.next().equals("Y")) {
+            	if(sc.next().equalsIgnoreCase("Y")) {
+            	    System.out.println("Chose Y");
             		covidInformationService.saveCovidInfoList(covidInformationList);
             		System.out.println("Information is saved in ");
             	}
